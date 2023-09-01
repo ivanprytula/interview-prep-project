@@ -18,7 +18,6 @@ djangorestframework = "^3.14.0"
 [tool.poetry.group.dev.dependencies]
 pytest-django = "^4.5.2"
 pytest-xdist = "^3.3.1"
-coverage = "^7.3.0"
 django-coverage-plugin = "^3.1.0"
 pre-commit = "^3.3.3"
 pylint = "^2.17.5"
@@ -34,28 +33,30 @@ djangorestframework-stubs = "^3.14.2"
 pylint-celery = "^0.3"
 pylint-django = "^2.5.3"
 hypothesis = "^6.83.0"
+selenium = "^4.12.0"
+pytest-cov = "^4.1.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-# ==== pytest ====
+# ==== Pytest ====
 [tool.pytest.ini_options]
-minversion = "6.0"
-addopts = "--ds=config_core.settings --reuse-db"
+minversion = "7.0"
+addopts = "--ds=config_core.settings --reuse-db --cov=. --cov-branch"
 python_files = [
-    "tests.py",
     "test_*.py",
 ]
 required_plugins = ["pytest-django", "pytest-xdist"]
 filterwarnings = [
     "error",
+    "ignore::DeprecationWarning",
 ]
 markers = [
     # dummy markers for testing
+    "custom_mark: some information of your mark",
     "foo",
     "bar",
-    "baz",
     # conftest.py reorders tests moving slow ones to the end of the list
     "slow",
 ]
@@ -117,6 +118,7 @@ max-line-length = 119
 disable = [
     "missing-docstring",
     "invalid-name",
+    "unused-import",
 ]
 
 [tool.pylint.DESIGN]

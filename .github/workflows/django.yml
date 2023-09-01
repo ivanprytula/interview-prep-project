@@ -32,15 +32,15 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     # https://jacobian.org/til/github-actions-poetry/
+    # TODO: consider profit of this step
+
     # Cache the installation of Poetry itself, e.g. the next step. This prevents the workflow
-    # from installing Poetry every time, which can be slow. Note the use of the Poetry version
-    # number in the cache key, and the "-0" suffix: this allows you to invalidate the cache
-    # manually if/when you want to upgrade Poetry, or if something goes wrong.
-    - name: Cache Poetry installation
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pypoetry
-        key: poetry-cache-${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-${{ env.POETRY_VERSION }}
+    # from installing Poetry every time, which can be slow.
+    # - name: Cache Poetry installation
+    #   uses: actions/cache@v3
+    #   with:
+    #     path: ~/.cache/pypoetry
+    #     key: poetry-cache-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ env.POETRY_VERSION }}
 
     #----------------------------------------------
     #  -----  install & configure poetry  -----
@@ -80,6 +80,6 @@ jobs:
     - name: Run tests
       # - run: poetry run pytest  # one-liner
       run: |
-        source .venv/bin/activate
+        source $VENV
         pytest tests/
         # coverage report
