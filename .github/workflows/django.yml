@@ -30,7 +30,6 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-        cache: 'poetry'
 
     # https://jacobian.org/til/github-actions-poetry/
     # Cache the installation of Poetry itself, e.g. the next step. This prevents the workflow
