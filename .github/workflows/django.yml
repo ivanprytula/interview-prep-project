@@ -12,9 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
-      max-parallel: 3
+      max-parallel: 2
       matrix:
-        python-version: ["3.9", "3.10", "3.11"]
+        python-version: ["3.10", "3.11"]
 
     steps:
       #----------------------------------------------
@@ -34,7 +34,7 @@ jobs:
     # number in the cache key, and the "-0" suffix: this allows you to invalidate the cache
     # manually if/when you want to upgrade Poetry, or if something goes wrong.
     - name: Cache Poetry installation
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.local
         key: poetry-1.5.1-0
@@ -52,7 +52,7 @@ jobs:
     #----------------------------------------------
     #       load cached venv if cache exists
     #----------------------------------------------
-    - name: Load cached venv
+    - name: Load cached deps from venv
       id: cached-poetry-dependencies
       uses: actions/cache@v3
       with:
