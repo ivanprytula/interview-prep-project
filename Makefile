@@ -10,5 +10,8 @@ runserver:
 test:
 	poetry run pytest -n 2
 
-act:
+act-full:
 	gh extension exec act -P ubuntu-latest=catthehacker/ubuntu:full-20.04 -v
+
+act-local:
+	gh extension exec act --pull=false

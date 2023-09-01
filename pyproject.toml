@@ -43,7 +43,7 @@ build-backend = "poetry.core.masonry.api"
 # ==== Pytest ====
 [tool.pytest.ini_options]
 minversion = "7.0"
-addopts = "--ds=config_core.settings --reuse-db --cov=. --cov-branch"
+addopts = "--ds=config_core.settings --reuse-db --cov=config_core/ --cov-branch"
 python_files = [
     "test_*.py",
 ]
