@@ -1,4 +1,4 @@
-name: Django CI
+name: "CI - test"
 
 on:
   push:
@@ -14,7 +14,7 @@ jobs:
       fail-fast: true
       max-parallel: 3
       matrix:
-        python-version: [3.9, 3.10, 3.11]
+        python-version: ["3.9", "3.10", "3.11"]
 
     steps:
       #----------------------------------------------
@@ -27,13 +27,25 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
+
+    # https://jacobian.org/til/github-actions-poetry/
+    # Cache the installation of Poetry itself, e.g. the next step. This prevents the workflow
+    # from installing Poetry every time, which can be slow. Note the use of the Poetry version
+    # number in the cache key, and the "-0" suffix: this allows you to invalidate the cache
+    # manually if/when you want to upgrade Poetry, or if something goes wrong.
+    - name: Cache Poetry installation
+      uses: actions/cache@v2
+      with:
+        path: ~/.local
+        key: poetry-1.5.1-0
+
     #----------------------------------------------
     #  -----  install & configure poetry  -----
     #----------------------------------------------
     - name: Install Poetry
       uses: snok/install-poetry@v1
       with:
-        version: latest            # default value
+        version: 1.5.1
         virtualenvs-create: true   # default value
         virtualenvs-in-project: true
         installer-parallel: true   # default value
@@ -50,10 +62,20 @@ jobs:
     # Install dependencies if the cache does not exist
     #----------------------------------------------
     - name: Install dependencies
+      # Install dependencies. `--no-root` means "install all dependencies but not the project
+      # itself", which is what you want to avoid caching _your_ code. The `if` statement
+      # ensures this only runs on a cache miss.
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-      # install only the dependencies and not including the current project - add --no-root
-      run: poetry install --no-interaction --no-root    
+      run: poetry install --no-interaction --no-root
+
+    # Now install _your_ project. This isn't necessary for many types of projects -- particularly
+    # things like Django apps don't need this. But it's a good idea since it fully-exercises the
+    # pyproject.toml and makes that if you add things like console-scripts at some point that
+    # they'll be installed and working.
+    # - run: poetry install --no-interaction
+
     - name: Run tests
+      # - run: poetry run pytest  # one-liner
       run: |
         source .venv/bin/activate
         pytest tests/

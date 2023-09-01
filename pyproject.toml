@@ -3,6 +3,7 @@ name = "interview-prep-project"
 version = "0.1.0"
 description = "todo"
 authors = ["ivanprytula <ivanprytula87@gmail.com>"]
+homepage = "https://example.dev"
 license = "MIT"
 readme = "README.md"
 packages = [{include = "interview_prep_project"}]
@@ -10,8 +11,123 @@ packages = [{include = "interview_prep_project"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 django = "^4.2.4"
+django-environ = "^0.11.1"
+djangorestframework = "^3.14.0"
 
+
+[tool.poetry.group.dev.dependencies]
+pytest-django = "^4.5.2"
+pytest-xdist = "^3.3.1"
+coverage = "^7.3.0"
+django-coverage-plugin = "^3.1.0"
+pre-commit = "^3.3.3"
+pylint = "^2.17.5"
+black = "^23.7.0"
+isort = "^5.12.0"
+flake8 = "^6.1.0"
+bandit = "^1.7.5"
+django-silk = "^5.0.3"
+mypy = "^1.5.1"
+pipdeptree = "^2.13.0"
+# django-stubs = "^4.2.3"
+djangorestframework-stubs = "^3.14.2"
+pylint-celery = "^0.3"
+pylint-django = "^2.5.3"
+hypothesis = "^6.83.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+# ==== pytest ====
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "--ds=config_core.settings --reuse-db"
+python_files = [
+    "tests.py",
+    "test_*.py",
+]
+required_plugins = ["pytest-django", "pytest-xdist"]
+filterwarnings = [
+    "error",
+]
+markers = [
+    # dummy markers for testing
+    "foo",
+    "bar",
+    "baz",
+    # conftest.py reorders tests moving slow ones to the end of the list
+    "slow",
+]
+
+# ==== Coverage ====
+[tool.coverage.run]
+# include = ["co/**"]
+omit = ["*/migrations/*", "*/tests/*"]
+plugins = ["django_coverage_plugin"]
+
+# ==== black ====
+[tool.black]
+line-length = 119
+target-version = ['py311']
+
+
+# ==== isort ====
+[tool.isort]
+profile = "black"
+line_length = 119
+known_first_party = [
+    "config_core",
+]
+skip = [".venv/", "venv"]
+skip_glob = ["**/migrations/*.py"]
+
+# ==== mypy ====
+[tool.mypy]
+python_version = "3.11"
+check_untyped_defs = true
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+plugins = [
+    "mypy_django_plugin.main",
+    "mypy_drf_plugin.main",
+]
+
+[[tool.mypy.overrides]]
+# Django migrations should not produce any errors:
+module = "*.migrations.*"
+ignore_errors = true
+
+[tool.django-stubs]
+django_settings_module = "config_core.settings"
+
+# ==== PyLint ====
+[tool.pylint.MASTER]
+load-plugins = [
+    "pylint_django",
+]
+django-settings-module = "config_core.settings"
+
+[tool.pylint.FORMAT]
+max-line-length = 119
+
+[tool.pylint."MESSAGES CONTROL"]
+disable = [
+    "missing-docstring",
+    "invalid-name",
+]
+
+[tool.pylint.DESIGN]
+max-parents = 13
+
+[tool.pylint.TYPECHECK]
+generated-members = [
+    "REQUEST",
+    "acl_users",
+    "aq_parent",
+    "[a-zA-Z]+_set{1,2}",
+    "save",
+    "delete",
+]
